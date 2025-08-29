@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Everything About Cars (EAC)</title>
+  <style>
+    :root{ --purple:#6a11cb; --blue:#2575fc; --card-bg: rgba(255,255,255,0.06); }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+      background-size: 300% 300%;
+      animation: bgMove 12s ease infinite;
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    @keyframes bgMove{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+    /* header */
+    header{
+      padding:36px 20px 8px;
+      text-align:center;
+    }
+    header h1{font-size:34px;margin:0 0 6px 0;letter-spacing:0.6px}
+    header p{margin:0;color:rgba(255,255,255,0.9)}
+    /* menu button (three dots) top-right */
+    .menu-btn{
+      position:fixed; top:18px; right:18px;
+      width:44px; height:44px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      background: rgba(255,255,255,0.08); color:#fff;
+      font-size:20px; cursor:pointer; z-index:1600;
+      transition: transform .18s ease, background .18s;
+    }
+    .menu-btn:hover{ transform:scale(1.08); background: rgba(255,255,255,0.12) }
+
+    /* overlay when panel open */
+    #overlay{
+      position:fixed; inset:0; background: rgba(0,0,0,0.45); opacity:0; visibility:hidden;
+      transition: opacity .25s ease; z-index:1500;
+    }
+    #overlay.show{ opacity:1; visibility:visible; }
+
+    /* side panel (from right) */
+    .side-panel{
+      position:fixed; top:0; right:-320px; width:300px; height:100%;
+      background: rgba(10,10,12,0.96); box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+      padding:18px; transition: right .34s cubic-bezier(.2,.9,.2,1); z-index:1550;
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .side-panel.open{ right:0; }
+    .side-panel .profile{ text-align:center }
+    .side-panel .profile img{ width:86px; height:86px; border-radius:50%; object-fit:cover; box-shadow: 0 8px 22px rgba(0,0,0,0.4) }
+    .side-panel .profile .name{ margin-top:10px; font-weight:700; color:#fff }
+    .divider{ height:1px; background: rgba(255,255,255,0.06); margin:14px 0; border-radius:2px }
+
+    .side-panel .menu-list{ list-style:none; padding:0; margin:0 }
+    .side-panel .menu-list li{
+      padding:10px 12px; margin-bottom:8px; border-radius:8px; color:#fff;
+      display:flex; align-items:center; gap:10px; cursor:pointer;
+      transition: transform .18s ease, background .18s;
+    }
+    .side-panel .menu-list li:hover{ transform:translateX(-6px); background: rgba(255,255,255,0.03) }
+    .side-panel .menu-list li .ico{ font-size:18px; width:22px; text-align:center }
+
+    .side-panel .author{ font-size:13px; color:rgba(255,255,255,0.8); text-align:center }
+    .side-panel .author a{ color:#00d4ff; text-decoration:none }
+
+    /* cards grid */
+    .grid{
+      padding:22px;
+      display:grid;
+      gap:20px;
+      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      align-items:start;
+    }
+
+    .card{
+      background: var(--card-bg);
+      border-radius:12px;
+      padding:10px;
+      transition: transform .22s cubic-bezier(.2,.9,.2,1), box-shadow .22s;
+      cursor:pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+    }
+    /* hover/enlarge animation */
+    .card:hover{ transform: translateY(-8px) scale(1.04); box-shadow: 0 18px 40px rgba(0,0,0,0.25) }
+
+    .card img{ width:100%; height:150px; object-fit:cover; border-radius:8px }
+    .card h3{ margin:10px 0 6px; font-size:16px; color:#fff }
+    .card p{ margin:0; color:rgba(255,255,255,0.85); font-size:0.92rem }
+
+    /* small responsive tweaks */
+    @media (max-width:520px){
+      header h1{ font-size:22px }
+      .side-panel{ width:85vw; right:-90vw }
+      .side-panel.open{ right:0 }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- header -->
+  <header>
+    <h1>Everything About Cars (EAC) </h1>
+  </header>
+
+  <!-- menu button -->
+  <div class="menu-btn" id="menuBtn" title="Open menu">⋮</div>
+  <!-- side panel -->
+  <aside class="side-panel" id="sidePanel" aria-hidden="true">
+    <div>
+      <div class="profile">
+        <img src="Profile/Profile.jpg" alt="Profile picture">
+        <div class="name">Welcome to EAC</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <ul class="menu-list">
+        <li onclick="goHome()"><span class="ico">🏠</span><span>Home</span></li>
+        <li onclick="openSupport()"><span class="ico">📧</span><span>Support</span></li>
+        <li onclick="openInstagram()"><span class="ico">📸</span><span>Instagram</span></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="divider"></div>
+      <div class="author">Designed &amp; Created by <strong>Armin Karimi</strong></div>
+      <div style="text-align:center;margin-top:6px"><a href="https://instagram.com/the.armiinn" target="_blank" style="color:#00d4ff;text-decoration:none">@the.armiinn</a></div>
+    </div>
+  </aside>
+
+  <!-- overlay -->
+  <div id="overlay" onclick="closePanel()"></div>
+
+  <!-- cards grid -->
+  <main class="grid">
+<a class="card" href="https://en.wikipedia.org/wiki/BMW_M5" target="_blank" rel="noopener noreferrer"><img src="Cars/BMW-M5.jpg" alt="BMW M5 2025"><h3>BMW M5 2025</h3><p>High-performance luxury sedan.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Ferrari_812_Superfast" target="_blank" rel="noopener noreferrer"><img src="Cars/Ferrari-812.jpg" alt="FERRARI 812 SUPERFAST"><h3>FERRARI 812 SUPERFAST</h3><p>Iconic Italian V12 supercar.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Mercedes-Benz_CLS-Class" target="_blank" rel="noopener noreferrer"><img src="Cars/Mercedes-CLS.jpg" alt="MERCEDES BENZ CLS CLASS"><h3>MERCEDES BENZ CLS CLASS</h3><p>Elegant four-door coupe-style sedan.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/LaFerrari" target="_blank" rel="noopener noreferrer"><img src="Cars/Ferrari-LaFerrari.jpg" alt="FERRARI LAFERRARI"><h3>FERRARI LAFERRARI</h3><p>Limited-production hybrid hypercar.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Porsche_911_GT3" target="_blank" rel="noopener noreferrer"><img src="Cars/Porsche-911GT-RS.jpg" alt="PORSCHE 911 GT3 RS"><h3>PORSCHE 911 GT3 RS</h3><p>Track-focused high-performance 911.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Mercedes-Benz_G-Class" target="_blank" rel="noopener noreferrer"><img src="Cars/Mercedes-Benz-G-Class.jpg" alt="MERCEDES BENZ G CLASS"><h3>MERCEDES BENZ G CLASS</h3><p>Iconic luxury off-roader.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Dodge_Challenger" target="_blank" rel="noopener noreferrer"><img src="Cars/Dodge-Challenger-SRT.jpg" alt="DODGE CHALLENGER SRT"><h3>DODGE CHALLENGER SRT</h3><p>American muscle car with bold design.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/BMW_i8" target="_blank" rel="noopener noreferrer"><img src="Cars/BMW-i8.jpg" alt="BMW I8"><h3>BMW I8</h3><p>Plug-in hybrid sports car with futuristic looks.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Lamborghini_Huracan" target="_blank" rel="noopener noreferrer"><img src="Cars/Lamborghini-Huracan.jpg" alt="LAMBORGHINI HURACAN"><h3>LAMBORGHINI HURACAN</h3><p>V10 mid-engine Italian supercar.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Lamborghini_Urus" target="_blank" rel="noopener noreferrer"><img src="Cars/Lamborghini-Urus.jpg" alt="LAMBORGHINI URUS"><h3>LAMBORGHINI URUS</h3><p>High-performance luxury SUV.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Lamborghini_Aventador" target="_blank" rel="noopener noreferrer"><img src="Cars/Lamborghini-Aventador.jpg" alt="LAMBORGHINI AVENTADOR"><h3>LAMBORGHINI AVENTADOR</h3><p>V12 flagship supercar.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/McLaren_675LT" target="_blank" rel="noopener noreferrer"><img src="Cars/Mclaren-675LT.jpg" alt="MCLAREN 675 LT"><h3>MCLAREN 675 LT</h3><p>Lightweight, track-focused supercar.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Aston_Martin_Vantage" target="_blank" rel="noopener noreferrer"><img src="Cars/Aston-Martin.jpg" alt="ASTON MARTIN VANTAGE"><h3>ASTON MARTIN VANTAGE</h3><p>British sports car with elegance and power.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/BMW_M3" target="_blank" rel="noopener noreferrer"><img src="Cars/BMW-M3-2025.jpg" alt="BMW M3 2025"><h3>BMW M3 2025</h3><p>Performance-oriented sports sedan.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Audi_R8" target="_blank" rel="noopener noreferrer"><img src="Cars/Audi-R8.jpg" alt="AUDI R8"><h3>AUDI R8</h3><p>German V10 mid-engine supercar.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Maserati_MC20" target="_blank" rel="noopener noreferrer"><img src="Cars/Maserati-MC20.jpg" alt="MASERATI MC20"><h3>MASERATI MC20</h3><p>Italian supercar with innovative engineering.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Bugatti_Chiron" target="_blank" rel="noopener noreferrer"><img src="Cars/Bugatti-Chiron.jpg" alt="BUGATTI CHIRON"><h3>BUGATTI CHIRON</h3><p>Extreme hypercar performance.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Koenigsegg_Jesko" target="_blank" rel="noopener noreferrer"><img src="Cars/Koenigsegg-Jesko.jpg" alt="KOENIGSEGG JESKO"><h3>KOENIGSEGG JESKO</h3><p>Swedish hypercar built for speed.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Bugatti_Veyron" target="_blank" rel="noopener noreferrer"><img src="Cars/Bugatti-Veyron.jpg" alt="BUGATTI VEYRON"><h3>BUGATTI VEYRON</h3><p>Pioneer hypercar icon.</p></a>
+<a class="card" href="https://en.wikipedia.org/wiki/Chevrolet_Corvette_C8" target="_blank" rel="noopener noreferrer"><img src="Cars/Chevrolet-Corvette-Z06.jpg" alt="CHEVROLET CORVETTE Z06"><h3>CHEVROLET CORVETTE Z06</h3><p>American high-performance sports car.</p></a>
+
+  </main>
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('overlay');
+
+    function openPanel(){
+      sidePanel.classList.add('open');
+      overlay.classList.add('show');
+      sidePanel.setAttribute('aria-hidden','false');
+    }
+    function closePanel(){
+      sidePanel.classList.remove('open');
+      overlay.classList.remove('show');
+      sidePanel.setAttribute('aria-hidden','true');
+    }
+    function togglePanel(){
+      if(sidePanel.classList.contains('open')) closePanel(); else openPanel();
+    }
+    menuBtn.addEventListener('click', togglePanel);
+
+    // support -> mailto
+    function openSupport(){
+      window.location.href = 'mailto:help.eac1@gmail.com';
+    }
+    // instagram
+    function openInstagram(){
+      window.open('https://instagram.com/eac.cars', '_blank', 'noopener');
+    }
+    // Home (scroll to top)
+    function goHome(){
+      window.scrollTo({top:0, behavior:'smooth'});
+      closePanel();
+    }
+
+    // keyboard escape closes panel
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closePanel();
+    });
+
+    // ensure clicking outside closes (overlay handles it)
+  </script>
+
+</body>
+</html>
